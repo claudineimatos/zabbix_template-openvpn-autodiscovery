@@ -1,47 +1,44 @@
 # Zabbix Template - OpenVPN Autodiscovery for Linux
-#NOT READY YET, LOOK FOR FIRST RELEASE SOON! -9/22/2023
 
-Zabbix Template for OpenVPN with AutoDiscovery
-Modified the original for use in Linux (Ubuntu 22.04.)  Template provides a simple health check to all OpenVPN client instances.
+Zabbix Template for OpenVPN client instances with AutoDiscovery
 
-Please note this does not collect traffic data as this is capable with out-of-the-box Zabbix OS templates.
+Modified original for use in Linux (Ubuntu 22.04) providing simple health check to all OpenVPN client instances.
+
+Please note this does not collect traffic data since it's capable with out-of-the-box Zabbix OS templates.
 
 ## Install Instructions 
-The following instructions are for Ubuntu 22.04 but you can adapt it to others.
+Instructions are for Ubuntu 22.04 but can adapt to other distros.
 
 1. Download the most recent release and copy all files except the template xml to your Linux box.
+    * https://github.com/rjgura/zabbix_template-openvpn-autodiscovery/releases/latest
 
 2. Rename SERVER_NAME.conf and move to /etc/zabbix/zabbix_agentd.d/
-  ```
-# OpenVPN Discovery rules
-UserParameter=openvpn.list.discovery[*],sudo /usr/local/bin/openvpn_discovery.sh $1
+    * Recommend using your hostname for the filename.
 
-# OpenVPN current sessions
-UserParameter=openvpn.conn.status[*],echo "state" | sudo /usr/local/bin/socat $1 stdio |grep -q CONNECTED,SUCCESS && echo 1 || echo 0
-UserParameter=openvpn.server.clients[*],echo "load-stats" | sudo /usr/local/bin/socat $1 stdio | grep SUCCESS | cut -d= -f 2 |   cut -d, -f 1 || echo 0
+3. Modify zabbix-agent config found in the renamed SERVER_NAME.conf
+    * Putting your config in an external file protects your settings during a zabbix agent upgrade.
+    * Put the IP addresses for your Zabbix server and your Linux box's hostname
+    * This file contains UserParameters used by the Zabbix template
   ```
-
-2. Modify zabbix-agent config found in SERVER_NAME.conf
-  ```
-
+Server=127.0.0.1
+ServerActive=127.0.0.1
+Hostname=localhost
   ```
 
-3. Install sudo utility from (System -> Package Manager) as socat will need root rights to get data from sockets.
-_Note that zabbix user is automatically created from the Zabbix Agent plugin and as such isn't possible to add rights from the pfSense web gui, so you'll have to do it from the console._
-  * Create a file named `/usr/local/etc/suoders.d/zabbix` and add the lines below.
+4. Move zabbix file to /etc/sudoers.d/
+    * If zabbix-agent runs as a different user, change the file name to match it
+    * This file contains the permissions required to run the discovery shell script without a password
   ```
-zabbix ALL=(ALL) NOPASSWD: /usr/local/bin/socat /var/etc/openvpn/*.sock stdio
 zabbix ALL=(ALL) NOPASSWD: /usr/local/bin/openvpn_discovery.sh CLIENT
-zabbix ALL=(ALL) NOPASSWD: /usr/local/bin/openvpn_discovery.sh SERVER
   ```
-  * Add the following line into `/usr/pbi/sudo-amd64/etc/sudoers`
+  * Make sure the following directive is active in `/etc/sudoers`
   ```
-#includedir /usr/local/etc/sudoers.d/
+@includedir /etc/sudoers.d
   ```
 
-4. Copy `openvpn_discovery.sh` into `/usr/local/bin/` and add executable permission
+5. Move `openvpn_discovery.sh` into `/usr/local/bin/` and add executable permission
   ```
 sudo chmod +x /usr/local/bin/openvpn_discovery.sh
   ```
 
-5. Import the Zabbix template and link it to the desired host
+6. Import the Zabbix template and link it to the desired host
