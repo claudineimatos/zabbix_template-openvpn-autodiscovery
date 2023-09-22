@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>6.0</version>
+    <date>2023-09-22T20:16:27Z</date>
+    <groups>
+        <group>
+            <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <uuid>5923ee2fbec145b18d823dfa94df7bc8</uuid>
+            <template>OpenVPN by Zabbix Agent</template>
+            <name>OpenVPN by Zabbix Agent</name>
+            <description>Discover OpenVPN client configuration and monitor connections</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <discovery_rules>
+                <discovery_rule>
+                    <uuid>9c2b82c9a8b645fbbe04ce7fe97561c6</uuid>
+                    <name>OpenVPN Client Discovery</name>
+                    <key>openvpn.list.discovery[CLIENT]</key>
+                    <delay>3600</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>558414b5a4dc494c83ceed78afce0747</uuid>
+                            <name>OpenVPN [{#CLIENT_NAME}] connection status</name>
+                            <key>openvpn.conn.status[{#CLIENT_NAME}]</key>
+                            <delay>15</delay>
+                            <description>Create an item to monitor connection status for each OpenVPN client config found in the OpenVPN config directory.  This uses the UserParameter=openvpn.conn.status found in the config file for the Zabbix agent.</description>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>OpenVPN Client</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>b32ef9bcc4f643dabee2cb380b53356a</uuid>
+                                    <expression>last(/OpenVPN by Zabbix Agent/openvpn.conn.status[{#CLIENT_NAME}],#2)&lt;&gt;1</expression>
+                                    <name>OpenVPN [{#CLIENT_NAME}] down on {HOSTNAME}</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
