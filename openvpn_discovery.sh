@@ -1,10 +1,13 @@
 #/bin/sh
 
-OPENVPN_CONF_DIR=$(echo $2 | grep -o "^/[^\s]+" || echo "/var/etc/openvpn/")
+#Change this variable if your OpenVPN config directory is in a different place
+OPENVPN_CONF_DIR="/etc/openvpn/"
 
-for i in `find ${OPENVPN_CONF_DIR} -iname "$1*.conf" -exec grep management {} \; | awk '{print $2}'`
+for i in `find ${OPENVPN_CONF_DIR} -iname "*.conf" | awk '{print $1}'`
 do
-	instances="$instances,"'{"{#'$1'}":"'$i'","{#'$1'_NAME}":"'`basename $i .sock`'"}'
+        CLIENT_NAME=`basename $i`
+        CLIENT_NAME=$(echo "${CLIENT_NAME%.*}")
+        instances="$instances,"'{"{#'$1'}":"'$i'","{#'$1'_NAME}":"'$CLIENT_NAME'"}'
 done
 
 echo '{"data":['${instances#,}']}'
