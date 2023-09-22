@@ -1,5 +1,5 @@
 # Zabbix Template - OpenVPN Autodiscovery
-
+#NOT READY YET, LOOK FOR FIRST RELEASE SOON! -9/22/2023
 Zabbix Template for OpenVPN with AutoDiscovery
 This fork's aim is to modify the original for use in Linux (Ubuntu 22.04.)  Template provides a simple health check to all OpenVPN client instances.
 
