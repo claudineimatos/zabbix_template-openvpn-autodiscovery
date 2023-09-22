@@ -1,14 +1,17 @@
-# Zabbix Template - OpenVPN Autodiscovery
+# Zabbix Template - OpenVPN Autodiscovery for Linux
 #NOT READY YET, LOOK FOR FIRST RELEASE SOON! -9/22/2023
-Zabbix Template for OpenVPN with AutoDiscovery
-This fork's aim is to modify the original for use in Linux (Ubuntu 22.04.)  Template provides a simple health check to all OpenVPN client instances.
 
-Please note this does not collect traffic data as this is capable with out-of-the-box Zabbix templates.
+Zabbix Template for OpenVPN with AutoDiscovery
+Modified the original for use in Linux (Ubuntu 22.04.)  Template provides a simple health check to all OpenVPN client instances.
+
+Please note this does not collect traffic data as this is capable with out-of-the-box Zabbix OS templates.
 
 ## Install Instructions 
-The following instructions are for Ubunut 22.04 but you can adapt it to others.
+The following instructions are for Ubuntu 22.04 but you can adapt it to others.
 
-1.  Add the following UserParameters to zabbix_agentd.conf
+1. Download the most recent release and copy all files except the template xml to your Linux box.
+
+2. Rename SERVER_NAME.conf and move to /etc/zabbix/zabbix_agentd.d/
   ```
 # OpenVPN Discovery rules
 UserParameter=openvpn.list.discovery[*],sudo /usr/local/bin/openvpn_discovery.sh $1
@@ -18,9 +21,9 @@ UserParameter=openvpn.conn.status[*],echo "state" | sudo /usr/local/bin/socat $1
 UserParameter=openvpn.server.clients[*],echo "load-stats" | sudo /usr/local/bin/socat $1 stdio | grep SUCCESS | cut -d= -f 2 |   cut -d, -f 1 || echo 0
   ```
 
-2. Install socat utility
+2. Modify zabbix-agent config found in SERVER_NAME.conf
   ```
-sudo pkg_add -r ftp://ftp.freebsd.org/pub/FreeBSD/ports/amd64/packages-8-stable/Latest/socat.tbz
+
   ```
 
 3. Install sudo utility from (System -> Package Manager) as socat will need root rights to get data from sockets.
