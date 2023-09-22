@@ -1,15 +1,14 @@
 # Zabbix Template - OpenVPN Autodiscovery
 
-This is a simple Zabbix Template for OpenVPN with AutoDiscovery
-It's aim to provide a simple health check to all OpenVPN client and server instances. Altough the primary use for this template is a pfSense server, it's easy to use it in any other Linux / UNIX / BSD host.
+Zabbix Template for OpenVPN with AutoDiscovery
+This fork's aim is to modify the original for use in Linux (Ubuntu 22.04.)  Template provides a simple health check to all OpenVPN client instances.
 
-Please note that I've choosed to do not collect traffic data as the host which this template is linked probably already has it's network interfaces autodiscovered, so this data would be be redundant
-
+Please note this does not collect traffic data as this is capable with out-of-the-box Zabbix templates.
 
 ## Install Instructions 
-The following instructions are for a pfSense server but you can easily adapt it to any other setup.
+The following instructions are for Ubunut 22.04 but you can adapt it to others.
 
-1.  Add the following UserParameters to zabbix_agentd.conf (Services -> Zabbix-2 Agent)
+1.  Add the following UserParameters to zabbix_agentd.conf
   ```
 # OpenVPN Discovery rules
 UserParameter=openvpn.list.discovery[*],sudo /usr/local/bin/openvpn_discovery.sh $1
